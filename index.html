@@ -1,0 +1,53 @@
+<html>
+    <body style="background-color: black; color: chartreuse;">
+        Enter encryption key <input type=”text” id = "key" style="background-color: black; color: chartreuse;"> </input>
+        <br/><br/>
+        <textarea rows="20" cols="100" style="background-color: black; color: chartreuse;" id="plaintext" placeholder="Enter text to encrypt"></textarea>
+        <br/><br/>
+        <button style="background-color: black; color: chartreuse; width: 200px;" id = "btnEncrypt">Encrypt</button>
+        <br/><br/>
+        <textarea rows="30" cols="100" style="background-color: black; color: chartreuse;" id="encrypted" placeholder="Enter text to decrypt"></textarea>
+        <br/><br/>
+        <button style="background-color: black; color: chartreuse; width: 200px;" id = "btnDecrypt">Decrypt</button>
+        <br/>
+        <script src="OTPcrypt.js"></script>
+
+        <script>
+            document.getElementById("btnEncrypt").addEventListener("click", encryptPrint);
+            document.getElementById("btnDecrypt").addEventListener("click", decryptPrint);
+            // stole this from the internet lol.
+            function delay(time) {
+                return new Promise(resolve => setTimeout(resolve, time));
+            }
+            async function encryptPrint() {
+                var key = document.getElementById("key").value;
+                var input = document.getElementById("plaintext").value;
+                document.getElementById('encrypted').value = "";
+                // FUCK IT! DOUBLE ENCRYPTION!
+                // (double encryption = double good)
+                var output = encrypt(key, input);
+                output = encrypt(key, output);
+                // now print it out all slow and cool like.
+                for (var i = 0; i < output.length; ++i) {
+                    document.getElementById('encrypted').value += output[i];
+                    await delay(1);
+                };
+            }
+
+            async function decryptPrint() {
+                var key = document.getElementById("key").value;
+                var input = document.getElementById("encrypted").value;
+                document.getElementById('plaintext').value = "";
+                // FUCK IT! DOUBLE ENCRYPTION!
+                // (double encryption = double good)
+                var decryptedData = decrypt(key, input);
+                decryptedData = decrypt(key, decryptedData);
+                // now print it out all slow and cool like.
+                for (var i = 0; i < decryptedData.length; ++i) {
+                    document.getElementById('plaintext').value += decryptedData[i];
+                    await delay(1);
+                };
+            }
+        </script>
+    </body>
+</html>
