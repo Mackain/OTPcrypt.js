@@ -1,18 +1,47 @@
 <html>
-    <body style="background-color: black; color: chartreuse;">
-        Enter encryption key <input type=”text” id = "key" style="background-color: black; color: chartreuse;"> </input>
-        <br/><br/>
-        <textarea rows="20" cols="100" style="background-color: black; color: chartreuse;" id="plaintext" placeholder="Enter text to encrypt"></textarea>
-        <br/><br/>
-        <button style="background-color: black; color: chartreuse; width: 200px;" id = "btnEncrypt">Encrypt</button>
-        <br/><br/>
-        <textarea rows="30" cols="100" style="background-color: black; color: chartreuse;" id="encrypted" placeholder="Enter text to decrypt"></textarea>
-        <br/><br/>
-        <button style="background-color: black; color: chartreuse; width: 200px;" id = "btnDecrypt">Decrypt</button>
-        <br/>
-        <script src="OTPcrypt.js"></script>
+    <body style="background-color: black; color: chartreuse; padding: 14px;" id="bod">
 
+
+        <div style="float: left; margin-right: 14px;">
+            Enter encryption key <input type=”text” id = "key" style="background-color: black; color: chartreuse;"> </input>
+            <br/><br/>
+            <textarea rows="20" cols="100" style="  background-color: black; color: chartreuse;" id="plaintext" placeholder="Enter text to encrypt"></textarea>
+            <br/><br/>
+            <button style="background-color: black; color: chartreuse; width: 200px;" id = "btnEncrypt">Encrypt</button>
+            <br/><br/>
+            <textarea rows="20" cols="100" style="background-color: black; color: chartreuse;" id="encrypted" placeholder="Enter text to decrypt"></textarea>
+            <br/><br/>
+            <button style="background-color: black; color: chartreuse; width: 200px;" id = "btnDecrypt">Decrypt</button>
+            <br/><br/>
+        </div>
+
+        <div style="float: left;">
+            Generate OTP keys 
+            <button style="background-color: black; color: chartreuse; width: 200px;" id = "btnMouseKeys">Generate keys with input</button>
+            <button style="background-color: black; color: chartreuse; width: 200px;" id = "btnPseudoKeys">Generate psuedorandom keys</button><br/><br/>
+            <textarea style="background-color: black; color: chartreuse;" rows="44" cols="85" id="keyText" placeholder="Pick an option for generating keys above."></textarea>
+            <div id="outputText"></div><br/>
+            <div id="dataDump"></div>
+
+
+        </div>
+        
+        
+
+
+        <script src="OTPcrypt.js"></script>
+        
         <script>
+
+            document.getElementById("btnMouseKeys").addEventListener("click", mouseKeyBtnPress);
+            document.getElementById("btnPseudoKeys").addEventListener("click", generateOTPkeysPsudo);
+
+            var isGeneratingMouseKeys = false;
+            var detectingMouseMovement = false;
+            var mousePosArray = [];
+            var mouseKeyCount = 0;
+            
+
             document.getElementById("btnEncrypt").addEventListener("click", encryptPrint);
             document.getElementById("btnDecrypt").addEventListener("click", decryptPrint);
             // stole this from the internet lol.
@@ -48,6 +77,88 @@
                     await delay(1);
                 };
             }
+            
+
+
+            function mouseKeyBtnPress(){
+                if(isGeneratingMouseKeys == false) {
+                    document.getElementById('btnMouseKeys').innerHTML = "<div style=\"color: red;\">STOP GENERATING KEYS</div>";
+                    document.getElementById('keyText').value = "";
+                    isGeneratingMouseKeys = true;
+                    generateOTPkeysMouse();
+                }
+                else if(isGeneratingMouseKeys == true) {
+                    document.getElementById('btnMouseKeys').innerHTML = "Generate keys with input";
+                    document.getElementById('outputText').innerHTML = "";
+                    isGeneratingMouseKeys = false;
+                    detectingMouseMovement = false;
+                    mousePosArray = [];
+                }
+                
+            }
+
+            function generateOTPkeysPsudo(){
+                var keyNumb = 20; // arbitrary number of keys to generate
+                document.getElementById('keyText').value = "";
+                for (var i = 0; i < keyNumb; ++i) {
+                    document.getElementById('keyText').value += "OTP KEY " + i + "\r\n";
+                    document.getElementById('keyText').value += generatepsuedorandomOTPkey();
+                    document.getElementById('keyText').value += "\r\n\r\n";
+                }
+            }
+
+            function generateOTPkeysMouse(){
+                mousePosArray = []
+                //document.getElementById('keyText').value = "";
+                detectingMouseMovement = true;
+            }
+
+            function findScreenCoords(mouseEvent)
+            {
+                if (detectingMouseMovement) {
+                    var expectedSize = groupLen * groupNumb;
+                    var strLen = mousePosArray.length;
+
+                    var strPer = Math.floor(strLen/expectedSize * 100)
+
+                    document.getElementById('outputText').innerHTML = "Move the mouse curson arrond the screen to generate keys...<br/>" + strPer + "%";
+
+                    if (strLen == expectedSize) {
+
+                        detectingMouseMovement = false;
+                        document.getElementById('keyText').value += "OTP KEY " + mouseKeyCount + "\r\n";
+                        document.getElementById('keyText').value += generateOTPkeyFromSeed(mousePosArray);
+                        document.getElementById('keyText').value += "\r\n\r\n";
+                        mouseKeyCount ++;
+                        generateOTPkeysMouse();
+
+
+                    } else if (strLen < expectedSize) {
+                        var xpos;
+                        var ypos;
+                        if (mouseEvent)
+                        {
+                            xpos = mouseEvent.screenX;
+                            ypos = mouseEvent.screenY;
+                        }
+                        else
+                        {
+                            xpos = window.event.screenX;
+                            ypos = window.event.screenY;
+                        }
+                        mousePosArray.push(xpos + ypos);
+                    }
+                }
+            }
+
+            
+
+            document.getElementById("bod").onmousemove = findScreenCoords;
+
+
+
+
+
         </script>
     </body>
 </html>

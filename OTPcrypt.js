@@ -1,5 +1,11 @@
 // Put all valid characters into this array. Any character not part of this array will not get encrypted.
-const alpha = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ', '.', ',', '!','?','&']
+const alpha = [' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '!','?','&','+','-',':',';','(',')','/','\\','>']
+const groupLen = 16; // number of characters per group
+const groupNumb = 20; // number of groups per key
+
+// also, lets have one version of the space array without the blankspace... for AESTETICS
+var spacelessAlpha = alpha;
+spacelessAlpha.shift();
 
 function encrypt(encryptionKey, input) {
     var keyArray = encryptionKey.split('');
@@ -69,4 +75,40 @@ function removeSalt(saltedString){
     // Unsalted output may get a lenght of 0 an invalid c is used.
     // If so just return the garbled output and pretend like it works as intended...
     return unsaltedOutput == "" ? saltedString : unsaltedOutput;
+}
+
+
+function generatepsuedorandomOTPkey(){
+
+    var keystring = "";
+    for (var y = 0; y < groupNumb; ++y) {
+        for (var z = 0; z < groupLen; ++z) {
+            keystring += spacelessAlpha[Math.floor(Math.random() * spacelessAlpha.length)];
+        }
+        if (y < groupNumb -1)
+            keystring += " "
+    }
+    return keystring;
+
+}
+
+// the seed must be an array of numbers, and a verry large one.
+// yeah yeah I know, it requires a crazy amount of indata, but this way you can play arround with the seed...
+function generateOTPkeyFromSeed(seedArray){
+
+    var keystring = "";
+
+    // fail if the array of numbers is not at least as big as the number of random characters needed
+    if (seedArray.length < groupLen * groupNumb) {
+        return null;
+    }
+
+    for (var x = 0; x < groupNumb * groupLen; x++) {
+        keystring += spacelessAlpha[seedArray[x]%spacelessAlpha.length]
+        if (x%groupLen == groupLen-1) {
+            keystring += " "
+        }
+    }
+    
+    return keystring;
 }
