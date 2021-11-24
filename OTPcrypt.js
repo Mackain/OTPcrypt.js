@@ -1,5 +1,5 @@
 // Put all valid characters into this array. Any character not part of this array will not get encrypted.
-const alpha = [' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '!','?','&','+','-',':',';','(',')','/','\\','>',];
+const alpha = [' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ',', '!','?','&','+','-',':',';','(',')','/','\\','>','#','_','/'];
 const groupLen = 16; // number of characters per group
 const groupNumb = 30; // number of groups per key
 
@@ -11,7 +11,7 @@ function encrypt(encryptionKey, input) {
     var output = "";
 
     input = addSalt(input);
-    
+
     for (var i = 0; i < input.length; ++i) {
         // special characters not part of the alphabet array are not encrypted.
         // So to maker sure the rest of the encryption does not break they are simply passed trough to the output unencrypted.
@@ -70,7 +70,7 @@ function removeSalt(saltedString){
     // remove n number of characters at the start of the input.
     var unsaltedOutput = saltedString.substring(n);
     unsaltedOutput = unsaltedOutput.substring(0, unsaltedOutput.length-1);
-    
+
     // Unsalted output may get a lenght of 0 an invalid c is used.
     // If so just return the garbled output and pretend like it works as intended...
     return unsaltedOutput == "" ? saltedString : unsaltedOutput;
@@ -108,6 +108,6 @@ function generateOTPkeyFromSeed(seedArray){
             keystring += " "
         }
     }
-    
+
     return keystring;
 }
